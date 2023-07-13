@@ -1,4 +1,10 @@
 {% extends 'base.html' %}
+{% load pygmentify_tags %}
+{% block style%}
+{{ block.super }}
+<link rel="stylesheet" href="{% pygmentify_css %}">
+{% endblock %}
+
 
 {% block content %}
 <div class="container">
@@ -26,7 +32,11 @@
                     <div class="col">
                         <div class="p-2 h-100" style="border:1px solid #ced4da; border-radius:5px;">
                             <p>
+                                {% pygmentify %}
+                                <pre class="python">
                                 {{ snippet.code }}
+                                </pre>
+                                {% endpygmentify %}
                             </p>
 
                         </div>

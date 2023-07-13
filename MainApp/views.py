@@ -5,6 +5,7 @@ from MainApp.forms import SnippetForm, UserRegistrationForm
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
+from django.contrib import messages
 
 
 def index_page(request):
@@ -36,7 +37,9 @@ def add_snippet_page(request):
             if request.user.is_authenticated:
                 snippet.user = request.user
                 snippet.save()
+                messages.success(request, 'Сниппет добавлен')
             return redirect('snippets-list')
+        messages.error(request, 'Ошибка при добавлении сниппета')
         return render(request, 'pages/add_snippet.html', {'form': form})
 
 
@@ -58,6 +61,7 @@ def snippet_detail(request, id):
 def snippet_delete(request, id):
     snippet = Snippet.objects.get(id=id)
     snippet.delete()
+    messages.success(request, 'Сниппет удален')
     # Перенаправление на туже страницу, с которой пришел запрос
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
@@ -81,6 +85,7 @@ def snippet_edit(request, sid):
         snippet.creation_date = form_data["creation_date"]
         snippet.public = form_data.get("public", False)
         snippet.save()
+        messages.success(request, 'Сниппет успешно отредактирован')
         return redirect('snippets-list')
 
 
@@ -94,8 +99,10 @@ def create_user(request):
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Пользователь успешно создан')
             return redirect('home')
         context['form'] = form
+        messages.error(request, 'Ошибка при создании пользователя')
         return render(request, 'pages/registration.html', context)
 
 
@@ -106,11 +113,13 @@ def login(request):
         user = auth.authenticate(request, username=username, password=password)
         if user is not None:
             auth.login(request, user)
+            messages.success(request, 'Авторизация успешна')
         else:
             context = {
                 'pagename': 'PythonBin',
                 'errors': ["wrong username or password"]
             }
+            messages.error(request, 'Ошибка авторизации')
             return render(request, 'pages/index.html', context)
     return redirect('home')
 
