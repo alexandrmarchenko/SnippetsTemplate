@@ -33,7 +33,7 @@
                         <div class="p-2 h-100" style="border:1px solid #ced4da; border-radius:5px;">
                             <p>
                                 {% pygmentify %}
-                                <pre class="python">
+                                <pre class="{{snippet.lang}}">
                                 {{ snippet.code }}
                                 </pre>
                                 {% endpygmentify %}
